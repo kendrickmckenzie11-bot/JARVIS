@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>J.A.R.V.I.S. Voice Test</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #02070b;
+      color: #00d9ff;
+      font-family: "Courier New", monospace;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      overflow: hidden;
+    }
+
+    .grid {
+      position: fixed;
+      inset: 0;
+
+      background-image:
+        linear-gradient(
+          rgba(0, 210, 255, 0.04) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          90deg,
+          rgba(0, 210, 255, 0.04) 1px,
+          transparent 1px
+        );
+
+      background-size: 40px 40px;
+    }
+
+    .hud {
+      position: relative;
+      z-index: 2;
+
+      width: min(700px, 92vw);
+
+      padding: 35px;
+
+      border: 1px solid rgba(0, 217, 255, 0.5);
+
+      background: rgba(0, 15, 22, 0.9);
+
+      box-shadow:
+        0 0 30px rgba(0, 200, 255, 0.12),
+        inset 0 0 30px rgba(0, 200, 255, 0.04);
+
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+
+      font-size: clamp(25px, 6vw, 45px);
+
+      letter-spacing: 7px;
+
+      text-shadow:
+        0 0 10px #00d9ff,
+        0 0 30px rgba(0, 217, 255, 0.5);
+    }
+
+    .subtitle {
+      color: #63828d;
+      letter-spacing: 3px;
+      font-size: 11px;
+      margin-bottom: 35px;
+    }
+
+    #orb {
+      width: 170px;
+      height: 170px;
+
+      margin: 0 auto 30px;
+
+      border-radius: 50%;
+
+      border: 2px solid #00cfff;
+
+      background:
+        radial-gradient(
+          circle,
+          #ffffff 0%,
+          #66eaff 12%,
+          #008dcc 35%,
+          rgba(0, 100, 150, 0.1) 65%,
+          transparent 70%
+        );
+
+      box-shadow:
+        0 0 20px #00cfff,
+        0 0 60px rgba(0, 190, 255, 0.5);
+
+      animation: pulse 2s infinite;
+    }
+
+    #status {
+      margin-bottom: 25px;
+
+      color: #00ffbf;
+
+      font-size: 12px;
+
+      letter-spacing: 3px;
+    }
+
+    #result {
+      min-height: 45px;
+
+      margin-bottom: 25px;
+
+      color: #d9faff;
+
+      font-size: 16px;
+
+      line-height: 1.5;
+    }
+
+    button {
+      padding: 15px 25px;
+
+      margin: 5px;
+
+      border: 1px solid #00d9ff;
+
+      background: rgba(0, 180, 255, 0.08);
+
+      color: #bdf6ff;
+
+      font-family: "Courier New", monospace;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+      letter-spacing: 1px;
+    }
+
+    button:hover {
+      background: rgba(0, 210, 255, 0.2);
+
+      box-shadow:
+        0 0 15px rgba(0, 210, 255, 0.4);
+    }
+
+    #commandInput {
+      width: 100%;
+
+      margin-top: 20px;
+
+      padding: 15px;
+
+      border: 1px solid rgba(0, 217, 255, 0.4);
+
+      outline: none;
+
+      background: rgba(0, 20, 30, 0.8);
+
+      color: white;
+
+      font-family: "Courier New", monospace;
+
+      font-size: 14px;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+
+      50% {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="grid"></div>
+
+  <div class="hud">
+
+    <h1>J.A.R.V.I.S.</h1>
+
+    <div class="subtitle">
+      VOICE INTERFACE // TEST SYSTEM
+    </div>
+
+    <div id="orb"></div>
+
+    <div id="status">
+      SYSTEM READY
+    </div>
+
+    <div id="result">
+      Press START VOICE and speak.
+    </div>
+
+    <button onclick="startVoice()">
+      🎤 START VOICE
+    </button>
+
+    <button onclick="stopVoice()">
+      ■ STOP
+    </button>
+
+    <input
+      id="commandInput"
+      type="text"
+      placeholder="Or type a command..."
+    >
+
+  </div>
+
+  <script>
+
+    const SpeechRecognition =
+      window.SpeechRecognition ||
+      window.webkitSpeechRecognition;
+
+    let recognition = null;
+
+    const status =
+      document.getElementById("status");
+
+    const result =
+      document.getElementById("result");
+
+    const input =
+      document.getElementById("commandInput");
+
+
+    if (SpeechRecognition) {
+
+      recognition =
+        new SpeechRecognition();
+
+      recognition.continuous = false;
+
+      recognition.interimResults = false;
+
+      recognition.lang = "en-US";
+
+
+      recognition.onstart =
+        function() {
+
+          status.textContent =
+            "LISTENING...";
+
+          result.textContent =
+            "I'm listening.";
+
+        };
+
+
+      recognition.onresult =
+        function(event) {
+
+          const text =
+            event.results[0][0].transcript;
+
+          result.textContent =
+            "YOU: " + text;
+
+          input.value =
+            text;
+
+          speak(
+            "I heard you say " + text
+          );
+
+        };
+
+
+      recognition.onerror =
+        function(event) {
+
+          status.textContent =
+            "VOICE ERROR";
+
+          result.textContent =
+            "Error: " + event.error;
+
+        };
+
+
+      recognition.onend =
+        function() {
+
+          status.textContent =
+            "SYSTEM READY";
+
+        };
+
+    } else {
+
+      status.textContent =
+        "VOICE NOT SUPPORTED";
+
+      result.textContent =
+        "This browser does not support Speech Recognition.";
+
+    }
+
+
+    function startVoice() {
+
+      if (!recognition) {
+
+        result.textContent =
+          "Speech Recognition is not available.";
+
+        return;
+
+      }
+
+      try {
+
+        recognition.start();
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+
+    }
+
+
+    function stopVoice() {
+
+      if (recognition) {
+
+        recognition.stop();
+
+      }
+
+    }
+
+
+    function speak(text) {
+
+      if (
+        !("speechSynthesis" in window)
+      ) {
+        return;
+      }
+
+      speechSynthesis.cancel();
+
+      const voice =
+        new SpeechSynthesisUtterance(text);
+
+      voice.rate = 0.9;
+
+      voice.pitch = 0.7;
+
+      voice.volume = 1;
+
+      speechSynthesis.speak(voice);
+
+    }
+
+  </script>
+
+</body>
+</html>
