@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>JARVIS</title>
 
 <style>
-
 * {
     box-sizing: border-box;
 }
@@ -17,95 +15,179 @@ body {
     margin: 0;
     width: 100%;
     height: 100%;
-    background: #030303;
-    color: #ff1a1a;
-    font-family: Arial, Helvetica, sans-serif;
     overflow: hidden;
+    background: #030303;
+    color: #eee;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
     background:
-        radial-gradient(circle at center, #180000 0%, #070000 35%, #000000 75%);
+        radial-gradient(circle at center, #180000 0%, #080000 35%, #020202 75%);
 }
 
-/* =========================================
+/* =====================================================
    MAIN HUD
-========================================= */
+   ===================================================== */
 
-#app {
+#hud {
+    position: relative;
     width: 100%;
     height: 100%;
-    position: relative;
     overflow: hidden;
 }
 
 /* scanlines */
 
-#app::before {
+#hud::before {
     content: "";
     position: absolute;
     inset: 0;
-
-    background:
-        repeating-linear-gradient(
-            to bottom,
-            rgba(255, 0, 0, 0.025) 0px,
-            rgba(255, 0, 0, 0.025) 1px,
-            transparent 1px,
-            transparent 4px
-        );
-
     pointer-events: none;
-    z-index: 100;
+    z-index: 50;
+
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.025) 0px,
+        rgba(255,255,255,0.025) 1px,
+        transparent 2px,
+        transparent 5px
+    );
 }
 
-/* =========================================
-   HEADER
-========================================= */
+/* red glow */
 
-.header {
+#hud::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 49;
+
+    box-shadow:
+        inset 0 0 120px rgba(255,0,0,0.16),
+        inset 0 0 30px rgba(255,0,0,0.12);
+}
+
+/* =====================================================
+   TOP BAR
+   ===================================================== */
+
+#topBar {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-
-    height: 70px;
+    height: 72px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 0 25px;
+    padding: 0 28px;
 
-    border-bottom: 1px solid rgba(255, 0, 0, 0.35);
+    border-bottom: 1px solid rgba(255,0,0,0.35);
 
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(5,0,0,0.75);
+
+    z-index: 20;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+    letter-spacing: 8px;
+    color: #fff;
+    text-shadow:
+        0 0 10px rgba(255,0,0,0.8),
+        0 0 25px rgba(255,0,0,0.4);
+}
+
+.logo span {
+    color: #ff1515;
+}
+
+#connectionStatus {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #aaa;
+}
+
+.statusDot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+
+    background: #ff1717;
+
+    box-shadow:
+        0 0 8px #ff1717,
+        0 0 18px rgba(255,0,0,0.8);
+
+    animation: pulse 1.4s infinite;
+}
+
+@keyframes pulse {
+    0%,100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .35;
+    }
+}
+
+/* =====================================================
+   LEFT PANEL
+   ===================================================== */
+
+#leftPanel {
+    position: absolute;
+    left: 25px;
+    top: 100px;
+    bottom: 95px;
+    width: 270px;
+
+    border-left: 1px solid rgba(255,0,0,0.25);
+    padding-left: 18px;
 
     z-index: 10;
 }
 
-.logo {
-    font-size: 26px;
-    font-weight: bold;
-    letter-spacing: 8px;
-
-    text-shadow:
-        0 0 8px red,
-        0 0 20px rgba(255, 0, 0, 0.7);
+.panelTitle {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: #ff3030;
+    margin-bottom: 16px;
 }
 
-.header-status {
-    font-size: 12px;
-    letter-spacing: 3px;
-
-    color: #ff5555;
+.telemetry {
+    margin-bottom: 30px;
 }
 
-/* =========================================
-   CENTER REACTOR
-========================================= */
+.telemetryRow {
+    display: flex;
+    justify-content: space-between;
 
-.center {
+    margin: 12px 0;
+
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.telemetryValue {
+    color: #ff3939;
+}
+
+/* =====================================================
+   REACTOR
+   ===================================================== */
+
+#reactorArea {
     position: absolute;
 
     left: 50%;
@@ -113,752 +195,758 @@ body {
 
     transform: translate(-50%, -50%);
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.reactor {
-    width: 280px;
-    height: 280px;
-
-    border-radius: 50%;
-
-    position: relative;
+    width: 430px;
+    height: 430px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: 2px solid rgba(255, 0, 0, 0.7);
+    z-index: 5;
+}
+
+.reactor {
+    position: relative;
+
+    width: 280px;
+    height: 280px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255,0,0,0.6);
 
     box-shadow:
-        0 0 20px rgba(255, 0, 0, 0.8),
-        0 0 60px rgba(255, 0, 0, 0.35),
-        inset 0 0 40px rgba(255, 0, 0, 0.25);
+        0 0 25px rgba(255,0,0,0.3),
+        inset 0 0 35px rgba(255,0,0,0.18);
 
-    animation: reactorPulse 2.5s infinite ease-in-out;
+    animation: reactorRotate 18s linear infinite;
+}
+
+@keyframes reactorRotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .reactor::before {
     content: "";
 
     position: absolute;
-
-    width: 220px;
-    height: 220px;
+    inset: 22px;
 
     border-radius: 50%;
 
-    border: 1px dashed rgba(255, 50, 50, 0.7);
+    border: 2px dashed rgba(255,0,0,0.55);
 
-    animation: rotate 12s linear infinite;
+    box-shadow:
+        0 0 20px rgba(255,0,0,0.3);
+
+    animation: reverseRotate 10s linear infinite;
+}
+
+@keyframes reverseRotate {
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
 }
 
 .reactor::after {
     content: "";
 
     position: absolute;
-
-    width: 150px;
-    height: 150px;
+    inset: 70px;
 
     border-radius: 50%;
 
-    border: 2px solid rgba(255, 0, 0, 0.4);
+    border: 1px solid rgba(255,40,40,0.9);
 
-    animation: rotateReverse 8s linear infinite;
+    box-shadow:
+        0 0 30px rgba(255,0,0,0.5),
+        inset 0 0 30px rgba(255,0,0,0.35);
 }
 
-.reactor-core {
-    width: 90px;
-    height: 90px;
+.reactorCore {
+    position: absolute;
+
+    width: 105px;
+    height: 105px;
 
     border-radius: 50%;
 
     background:
         radial-gradient(
             circle,
-            #ffffff 0%,
-            #ff5555 8%,
-            #ff0000 35%,
-            #500000 70%,
+            #fff 0%,
+            #ff7777 8%,
+            #ff2020 25%,
+            #7a0000 55%,
             transparent 72%
         );
 
     box-shadow:
-        0 0 25px #ff0000,
-        0 0 70px rgba(255, 0, 0, 0.8);
+        0 0 20px #ff2020,
+        0 0 60px rgba(255,0,0,0.7),
+        0 0 120px rgba(255,0,0,0.35);
 
-    animation: corePulse 1.4s infinite alternate;
-}
-
-@keyframes reactorPulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-        box-shadow:
-            0 0 20px rgba(255, 0, 0, 0.8),
-            0 0 60px rgba(255, 0, 0, 0.35),
-            inset 0 0 40px rgba(255, 0, 0, 0.25);
-    }
-
-    50% {
-        transform: scale(1.025);
-        box-shadow:
-            0 0 30px rgba(255, 0, 0, 1),
-            0 0 90px rgba(255, 0, 0, 0.5),
-            inset 0 0 50px rgba(255, 0, 0, 0.35);
-    }
+    animation: corePulse 1.7s ease-in-out infinite;
 }
 
 @keyframes corePulse {
-
-    from {
-        transform: scale(0.9);
+    0%,100% {
+        transform: scale(.92);
+        opacity: .8;
     }
 
-    to {
+    50% {
         transform: scale(1.08);
+        opacity: 1;
     }
 }
 
-@keyframes rotate {
-
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes rotateReverse {
-
-    from {
-        transform: rotate(360deg);
-    }
-
-    to {
-        transform: rotate(0deg);
-    }
-}
-
-/* =========================================
-   VOICE STATE
-========================================= */
-
-.voice-state {
-    margin-top: 25px;
-
-    font-size: 15px;
-
-    letter-spacing: 5px;
-
-    text-shadow:
-        0 0 10px red;
-
-    font-weight: bold;
-}
-
-/* =========================================
-   SIDE PANELS
-========================================= */
-
-.panel {
-    position: absolute;
-
-    top: 100px;
-
-    width: 260px;
-
-    padding: 18px;
-
-    border: 1px solid rgba(255, 0, 0, 0.35);
-
-    background:
-        rgba(0, 0, 0, 0.55);
-
-    box-shadow:
-        0 0 25px rgba(255, 0, 0, 0.08);
-
-    z-index: 5;
-}
-
-.panel.left {
-    left: 20px;
-}
-
-.panel.right {
-    right: 20px;
-}
-
-.panel-title {
-    font-size: 11px;
-
-    letter-spacing: 3px;
-
-    color: #ff5555;
-
-    margin-bottom: 15px;
-}
-
-.stat {
-    display: flex;
-
-    justify-content: space-between;
-
-    margin: 10px 0;
-
-    font-size: 11px;
-
-    letter-spacing: 1px;
-}
-
-.stat span:last-child {
-    color: #ff7777;
-}
-
-/* =========================================
-   CONSOLE
-========================================= */
-
-.console {
-    position: absolute;
-
-    bottom: 115px;
-
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: min(800px, 90%);
-
-    height: 130px;
-
-    overflow-y: auto;
-
-    padding: 12px;
-
-    border: 1px solid rgba(255, 0, 0, 0.3);
-
-    background: rgba(0, 0, 0, 0.6);
-
-    font-family: monospace;
-
-    font-size: 12px;
-
-    z-index: 8;
-}
-
-.console-line {
-    margin-bottom: 7px;
-}
-
-.console-line.user {
-    color: #ffaaaa;
-}
-
-.console-line.jarvis {
-    color: #ff3333;
-}
-
-.console-line.system {
-    color: #777;
-}
-
-/* =========================================
-   COMMAND BAR
-========================================= */
-
-.command-area {
-    position: absolute;
-
-    bottom: 25px;
-
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: min(800px, 90%);
-
-    display: flex;
-
-    gap: 8px;
-
-    z-index: 20;
-}
-
-.command-area input {
-    flex: 1;
-
-    height: 45px;
-
-    padding: 0 15px;
-
-    color: #ff5555;
-
-    background: #050000;
-
-    border: 1px solid rgba(255, 0, 0, 0.5);
-
-    outline: none;
-
-    font-family: monospace;
-
-    font-size: 14px;
-}
-
-.command-area input:focus {
-    box-shadow:
-        0 0 15px rgba(255, 0, 0, 0.3);
-}
-
-button {
-    height: 45px;
-
-    padding: 0 18px;
-
-    border: 1px solid red;
-
-    color: #ff4444;
-
-    background: #080000;
-
-    cursor: pointer;
-
-    font-weight: bold;
-
-    letter-spacing: 1px;
-}
-
-button:hover {
-    background: #240000;
-
-    box-shadow:
-        0 0 15px rgba(255, 0, 0, 0.5);
-}
-
-/* =========================================
-   SETTINGS
-========================================= */
-
-.settings {
+#reactorLabel {
     position: absolute;
 
     bottom: 20px;
 
-    right: 20px;
+    font-size: 10px;
+    letter-spacing: 5px;
 
-    width: 250px;
-
-    padding: 15px;
-
-    background: rgba(0, 0, 0, 0.8);
-
-    border: 1px solid rgba(255, 0, 0, 0.3);
-
-    z-index: 20;
+    color: #ff3030;
 }
 
-.settings label {
+/* =====================================================
+   LISTENING STATE
+   ===================================================== */
+
+#listeningState {
+    position: absolute;
+
+    left: 50%;
+    top: calc(50% + 245px);
+
+    transform: translateX(-50%);
+
+    font-size: 12px;
+    letter-spacing: 5px;
+
+    color: #888;
+
+    transition: .25s;
+}
+
+body.listening #listeningState {
+    color: #ff2525;
+
+    text-shadow:
+        0 0 10px #ff0000,
+        0 0 25px rgba(255,0,0,.7);
+}
+
+body.speaking #listeningState {
+    color: #fff;
+
+    text-shadow:
+        0 0 10px #ff0000;
+}
+
+/* =====================================================
+   RIGHT PANEL
+   ===================================================== */
+
+#rightPanel {
+    position: absolute;
+
+    right: 25px;
+    top: 100px;
+    bottom: 95px;
+
+    width: 270px;
+
+    border-right: 1px solid rgba(255,0,0,.25);
+
+    padding-right: 18px;
+
+    z-index: 10;
+}
+
+.controlGroup {
+    margin-bottom: 25px;
+}
+
+.controlLabel {
     display: block;
 
-    font-size: 10px;
+    font-size: 9px;
+    letter-spacing: 3px;
 
-    letter-spacing: 2px;
+    color: #777;
 
-    margin-top: 10px;
-
-    color: #ff5555;
+    margin-bottom: 9px;
 }
 
-.settings input,
-.settings select {
+input[type="text"],
+select {
     width: 100%;
 
-    margin-top: 5px;
+    padding: 11px;
 
-    background: #050000;
+    color: #eee;
 
-    color: #ff5555;
+    background: rgba(20,0,0,.8);
 
-    border: 1px solid rgba(255, 0, 0, 0.35);
-
-    padding: 7px;
+    border: 1px solid rgba(255,0,0,.35);
 
     outline: none;
 }
 
-/* =========================================
-   BOOT SCREEN
-========================================= */
+input[type="text"]:focus,
+select:focus {
+    border-color: #ff2020;
 
-#boot {
+    box-shadow:
+        0 0 12px rgba(255,0,0,.2);
+}
+
+select option {
+    background: #100000;
+}
+
+.rangeRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: #ff2020;
+}
+
+.rangeValue {
+    width: 45px;
+
+    text-align: right;
+
+    color: #ff3030;
+
+    font-size: 11px;
+}
+
+/* =====================================================
+   CONSOLE
+   ===================================================== */
+
+#console {
+    position: absolute;
+
+    left: 50%;
+    bottom: 88px;
+
+    transform: translateX(-50%);
+
+    width: min(700px, 55vw);
+    height: 105px;
+
+    overflow-y: auto;
+
+    padding: 12px 15px;
+
+    background: rgba(0,0,0,.55);
+
+    border-top: 1px solid rgba(255,0,0,.2);
+
+    border-bottom: 1px solid rgba(255,0,0,.2);
+
+    font-family: monospace;
+    font-size: 11px;
+
+    z-index: 15;
+}
+
+.consoleLine {
+    margin: 5px 0;
+
+    color: #888;
+}
+
+.consoleLine.user {
+    color: #ddd;
+}
+
+.consoleLine.jarvis {
+    color: #ff3636;
+}
+
+/* =====================================================
+   COMMAND BAR
+   ===================================================== */
+
+#commandBar {
+    position: absolute;
+
+    left: 50%;
+    bottom: 20px;
+
+    transform: translateX(-50%);
+
+    width: min(750px, 75vw);
+
+    display: flex;
+    gap: 8px;
+
+    z-index: 25;
+}
+
+#commandInput {
+    flex: 1;
+
+    height: 48px;
+
+    padding: 0 16px;
+
+    color: white;
+
+    background: rgba(8,0,0,.95);
+
+    border: 1px solid rgba(255,0,0,.5);
+
+    outline: none;
+
+    font-family: monospace;
+}
+
+#commandInput::placeholder {
+    color: #555;
+}
+
+#commandInput:focus {
+    border-color: #ff2222;
+
+    box-shadow:
+        0 0 15px rgba(255,0,0,.2);
+}
+
+.hudButton {
+    height: 48px;
+
+    min-width: 110px;
+
+    border: 1px solid #7d0000;
+
+    background: #130000;
+
+    color: #ff3333;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.hudButton:hover {
+    background: #300000;
+
+    border-color: #ff2222;
+
+    box-shadow:
+        0 0 15px rgba(255,0,0,.3);
+}
+
+.hudButton.active {
+    background: #500000;
+
+    color: white;
+
+    box-shadow:
+        0 0 20px rgba(255,0,0,.5);
+}
+
+/* =====================================================
+   BOOT SCREEN
+   ===================================================== */
+
+#bootScreen {
     position: fixed;
 
     inset: 0;
 
-    background: #000;
+    background: #020202;
 
     z-index: 1000;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     flex-direction: column;
 }
 
-.boot-title {
-    font-size: 42px;
+#bootTitle {
+    font-size: 38px;
 
     letter-spacing: 12px;
 
-    text-shadow:
-        0 0 15px red,
-        0 0 40px red;
+    color: white;
 
-    margin-bottom: 30px;
+    text-shadow:
+        0 0 20px rgba(255,0,0,.8);
+
+    margin-bottom: 35px;
 }
 
-.boot-text {
+#bootText {
+    width: min(600px, 80vw);
+
     font-family: monospace;
 
-    font-size: 13px;
+    color: #ff3030;
 
-    color: #ff4444;
+    font-size: 12px;
 
-    min-height: 100px;
+    line-height: 2;
 
-    text-align: center;
+    min-height: 150px;
 }
 
-.boot-bar {
-    width: 300px;
+#bootButton {
+    padding: 13px 30px;
 
-    height: 3px;
+    background: transparent;
 
-    background: #250000;
+    border: 1px solid #ff2020;
+
+    color: #ff2020;
+
+    cursor: pointer;
+
+    letter-spacing: 4px;
 
     margin-top: 20px;
-
-    overflow: hidden;
 }
 
-.boot-progress {
-    width: 0%;
-
-    height: 100%;
-
-    background: red;
+#bootButton:hover {
+    background: #330000;
 
     box-shadow:
-        0 0 15px red;
-
-    transition:
-        width 0.15s linear;
+        0 0 20px rgba(255,0,0,.4);
 }
 
-/* =========================================
-   LISTENING INDICATOR
-========================================= */
-
-.listening-dot {
-    display: inline-block;
-
-    width: 8px;
-    height: 8px;
-
-    border-radius: 50%;
-
-    background: #ff0000;
-
-    box-shadow:
-        0 0 10px red;
-
-    margin-right: 7px;
-
-    animation: listeningPulse 1s infinite;
+#bootScreen.hidden {
+    display: none;
 }
 
-@keyframes listeningPulse {
-
-    0%,
-    100% {
-        opacity: 0.35;
-        transform: scale(0.8);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.3);
-    }
-}
-
-/* =========================================
+/* =====================================================
    MOBILE
-========================================= */
+   ===================================================== */
 
-@media (max-width: 800px) {
+@media(max-width: 900px) {
 
-    .panel {
+    #leftPanel,
+    #rightPanel {
         display: none;
     }
 
-    .reactor {
-        width: 210px;
-        height: 210px;
+    #reactorArea {
+        transform: translate(-50%, -55%) scale(.75);
     }
 
-    .reactor::before {
-        width: 165px;
-        height: 165px;
+    #listeningState {
+        top: calc(50% + 170px);
     }
 
-    .reactor::after {
-        width: 115px;
-        height: 115px;
+    #console {
+        width: 90vw;
+        bottom: 82px;
     }
 
-    .reactor-core {
-        width: 65px;
-        height: 65px;
+    #commandBar {
+        width: 92vw;
     }
 
-    .settings {
-        display: none;
-    }
-
-    .console {
-        bottom: 105px;
-
-        height: 100px;
-    }
-
-    .command-area {
-        bottom: 15px;
-    }
-
-    .command-area button {
-        padding: 0 10px;
+    #topBar {
+        padding: 0 15px;
     }
 
     .logo {
-        font-size: 20px;
+        font-size: 18px;
+        letter-spacing: 5px;
     }
 
+    #connectionStatus {
+        font-size: 8px;
+        letter-spacing: 1px;
+    }
 }
-
 </style>
 </head>
 
 <body>
 
-<div id="app">
+<div id="hud">
 
-    <!-- HEADER -->
+    <!-- =================================================
+         TOP BAR
+         ================================================= -->
 
-    <div class="header">
+    <div id="topBar">
 
         <div class="logo">
-            JARVIS
+            JAR<span>V</span>IS
         </div>
 
-        <div
-            class="header-status"
-            id="headerStatus"
-        >
-            INITIALIZING
+        <div id="connectionStatus">
+            <div class="statusDot"></div>
+            <span id="connectionText">
+                SYSTEM ONLINE
+            </span>
         </div>
 
     </div>
 
 
-    <!-- LEFT PANEL -->
+    <!-- =================================================
+         LEFT TELEMETRY
+         ================================================= -->
 
-    <div class="panel left">
+    <div id="leftPanel">
 
-        <div class="panel-title">
+        <div class="panelTitle">
             SYSTEM TELEMETRY
         </div>
 
-        <div class="stat">
-            <span>CORE</span>
-            <span id="coreStatus">
-                ONLINE
-            </span>
+        <div class="telemetry">
+
+            <div class="telemetryRow">
+                <span>AI CORE</span>
+                <span class="telemetryValue">
+                    ONLINE
+                </span>
+            </div>
+
+            <div class="telemetryRow">
+                <span>VOICE ENGINE</span>
+                <span class="telemetryValue">
+                    ONLINE
+                </span>
+            </div>
+
+            <div class="telemetryRow">
+                <span>OPENROUTER</span>
+                <span class="telemetryValue">
+                    CONNECTED
+                </span>
+            </div>
+
+            <div class="telemetryRow">
+                <span>MICROPHONE</span>
+                <span
+                    class="telemetryValue"
+                    id="micStatus"
+                >
+                    STANDBY
+                </span>
+            </div>
+
+            <div class="telemetryRow">
+                <span>LISTEN MODE</span>
+                <span
+                    class="telemetryValue"
+                    id="listenStatus"
+                >
+                    ACTIVE
+                </span>
+            </div>
+
         </div>
 
-        <div class="stat">
-            <span>VOICE</span>
-            <span id="voiceStatus">
-                ONLINE
-            </span>
+
+        <div class="panelTitle">
+            CURRENT USER
         </div>
 
-        <div class="stat">
-            <span>MIC</span>
-            <span id="micStatus">
-                STARTING
-            </span>
-        </div>
+        <div class="telemetry">
 
-        <div class="stat">
-            <span>AI</span>
-            <span id="aiStatus">
-                ONLINE
-            </span>
-        </div>
+            <div class="telemetryRow">
+                <span>IDENTITY</span>
+                <span
+                    class="telemetryValue"
+                    id="userDisplay"
+                >
+                    USER
+                </span>
+            </div>
 
-        <div class="stat">
-            <span>WAKE WORD</span>
-            <span>
-                ACTIVE
-            </span>
-        </div>
-
-    </div>
-
-
-    <!-- RIGHT PANEL -->
-
-    <div class="panel right">
-
-        <div class="panel-title">
-            USER PROFILE
-        </div>
-
-        <div class="stat">
-            <span>IDENTITY</span>
-            <span id="identityDisplay">
-                USER
-            </span>
-        </div>
-
-        <div class="stat">
-            <span>MODE</span>
-            <span id="modeDisplay">
-                VOICE
-            </span>
-        </div>
-
-        <div class="stat">
-            <span>AI ROUTER</span>
-            <span>
-                OPENROUTER
-            </span>
-        </div>
-
-        <div class="stat">
-            <span>CONNECTION</span>
-            <span id="connectionDisplay">
-                READY
-            </span>
         </div>
 
     </div>
 
 
-    <!-- CENTER -->
+    <!-- =================================================
+         REACTOR
+         ================================================= -->
 
-    <div class="center">
+    <div id="reactorArea">
 
         <div class="reactor">
 
-            <div class="reactor-core"></div>
+            <div class="reactorCore"></div>
 
         </div>
 
-        <div
-            class="voice-state"
-            id="voiceState"
-        >
-            <span class="listening-dot"></span>
-            LISTENING
+        <div id="reactorLabel">
+            JARVIS CORE
         </div>
 
     </div>
 
 
-    <!-- CONSOLE -->
-
-    <div
-        class="console"
-        id="console"
-    ></div>
+    <div id="listeningState">
+        LISTENING
+    </div>
 
 
-    <!-- SETTINGS -->
+    <!-- =================================================
+         RIGHT PANEL
+         ================================================= -->
 
-    <div class="settings">
+    <div id="rightPanel">
 
-        <label>
-            YOUR NAME
-        </label>
-
-        <input
-            id="nameInput"
-            type="text"
-            placeholder="Enter your name"
-        >
-
-        <button
-            id="saveNameButton"
-            style="width:100%;margin-top:8px;"
-        >
-            SAVE NAME
-        </button>
+        <div class="panelTitle">
+            CONFIGURATION
+        </div>
 
 
-        <label>
-            JARVIS VOICE
-        </label>
+        <div class="controlGroup">
 
-        <select id="voiceSelect">
-            <option>
-                Loading voices...
-            </option>
-        </select>
+            <label class="controlLabel">
+                USER NAME
+            </label>
 
+            <input
+                type="text"
+                id="nameInput"
+                placeholder="Enter your name"
+                autocomplete="off"
+            >
 
-        <label>
-            SPEECH SPEED
-        </label>
-
-        <input
-            id="rateControl"
-            type="range"
-            min="0.7"
-            max="1.5"
-            step="0.05"
-            value="1"
-        >
+        </div>
 
 
-        <label>
-            PITCH
-        </label>
+        <div class="controlGroup">
 
-        <input
-            id="pitchControl"
-            type="range"
-            min="0.5"
-            max="1.5"
-            step="0.05"
-            value="0.85"
-        >
+            <label class="controlLabel">
+                JARVIS VOICE
+            </label>
+
+            <select id="voiceSelect">
+
+                <option value="eve">
+                    Eve
+                </option>
+
+                <option value="ara">
+                    Ara
+                </option>
+
+                <option value="rex">
+                    Rex
+                </option>
+
+                <option value="sal">
+                    Sal
+                </option>
+
+                <option value="leo">
+                    Leo
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="controlGroup">
+
+            <label class="controlLabel">
+                VOICE SPEED
+            </label>
+
+            <div class="rangeRow">
+
+                <input
+                    type="range"
+                    id="rateControl"
+                    min="0.5"
+                    max="1.5"
+                    step="0.05"
+                    value="1"
+                >
+
+                <span
+                    class="rangeValue"
+                    id="rateValue"
+                >
+                    1.00
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="controlGroup">
+
+            <label class="controlLabel">
+                BROWSER FALLBACK PITCH
+            </label>
+
+            <div class="rangeRow">
+
+                <input
+                    type="range"
+                    id="pitchControl"
+                    min="0.5"
+                    max="2"
+                    step="0.05"
+                    value="1"
+                >
+
+                <span
+                    class="rangeValue"
+                    id="pitchValue"
+                >
+                    1.00
+                </span>
+
+            </div>
+
+        </div>
 
     </div>
 
 
-    <!-- COMMAND INPUT -->
+    <!-- =================================================
+         CONSOLE
+         ================================================= -->
 
-    <div class="command-area">
+    <div id="console"></div>
+
+
+    <!-- =================================================
+         COMMAND BAR
+         ================================================= -->
+
+    <div id="commandBar">
 
         <input
             id="commandInput"
@@ -867,11 +955,17 @@ button:hover {
             autocomplete="off"
         >
 
-        <button id="sendButton">
+        <button
+            class="hudButton"
+            id="sendButton"
+        >
             SEND
         </button>
 
-        <button id="micButton">
+        <button
+            class="hudButton"
+            id="micButton"
+        >
             MIC
         </button>
 
@@ -880,29 +974,21 @@ button:hover {
 </div>
 
 
-<!-- BOOT SCREEN -->
+<!-- =====================================================
+     BOOT SCREEN
+     ===================================================== -->
 
-<div id="boot">
+<div id="bootScreen">
 
-    <div class="boot-title">
+    <div id="bootTitle">
         JARVIS
     </div>
 
-    <div
-        class="boot-text"
-        id="bootText"
-    >
-        INITIALIZING...
-    </div>
+    <div id="bootText"></div>
 
-    <div class="boot-bar">
-
-        <div
-            class="boot-progress"
-            id="bootProgress"
-        ></div>
-
-    </div>
+    <button id="bootButton">
+        INITIALIZE
+    </button>
 
 </div>
 
@@ -910,44 +996,48 @@ button:hover {
 <script>
 
 /* =====================================================
-   APPS SCRIPT CONNECTION
-===================================================== */
+   APPS SCRIPT BACKEND
+   ===================================================== */
 
 const APPS_SCRIPT_URL =
-    "https://script.google.com/a/macros/students.katyisd.org/s/AKfycbxv90eQcDyqS_Ljh7k6S1LgALCQdx847n2xPD8GK5MmMi0-jvGFcJ-0T27KlHPqPfz61w/exec";
+    "https://script.google.com/a/macros/students.katyisd.org/s/AKfycbzhkEbxBKBW1BLVnR0IkTbl0kE8xu8c0YQnKbKlLBRfypDRmP8-R-iJ2U66d2CGWHAJvQ/exec";
 
 
 /* =====================================================
-   VARIABLES
-===================================================== */
-
-let userName =
-    localStorage.getItem("jarvisUserName") ||
-    "Sir";
-
-let selectedVoice = null;
-
-let voices = [];
-
-let speaking = false;
-
-let listening = false;
+   GLOBAL VARIABLES
+   ===================================================== */
 
 let recognition = null;
 
-let recognitionAvailable = false;
+let listening = false;
 
-let wakeWordActive = true;
+let speaking = false;
 
-let aiThinking = false;
+let currentAudio = null;
+
+let currentAudioURL = null;
+
+let recognitionRestartTimer = null;
+
+let requestCounter = 0;
+
+let wakeWordDetected = false;
+
+let browserVoices = [];
 
 
 /* =====================================================
    ELEMENTS
-===================================================== */
+   ===================================================== */
 
-const consoleElement =
-    document.getElementById("console");
+const bootScreen =
+    document.getElementById("bootScreen");
+
+const bootText =
+    document.getElementById("bootText");
+
+const bootButton =
+    document.getElementById("bootButton");
 
 const commandInput =
     document.getElementById("commandInput");
@@ -958,465 +1048,381 @@ const sendButton =
 const micButton =
     document.getElementById("micButton");
 
-const voiceSelect =
-    document.getElementById("voiceSelect");
+const consoleElement =
+    document.getElementById("console");
 
 const nameInput =
     document.getElementById("nameInput");
 
-const saveNameButton =
-    document.getElementById("saveNameButton");
+const voiceSelect =
+    document.getElementById("voiceSelect");
 
-const voiceState =
-    document.getElementById("voiceState");
+const rateControl =
+    document.getElementById("rateControl");
 
-const headerStatus =
-    document.getElementById("headerStatus");
+const pitchControl =
+    document.getElementById("pitchControl");
+
+const rateValue =
+    document.getElementById("rateValue");
+
+const pitchValue =
+    document.getElementById("pitchValue");
+
+const userDisplay =
+    document.getElementById("userDisplay");
 
 const micStatus =
     document.getElementById("micStatus");
 
-const aiStatus =
-    document.getElementById("aiStatus");
+const listenStatus =
+    document.getElementById("listenStatus");
 
-const identityDisplay =
-    document.getElementById("identityDisplay");
-
-const connectionDisplay =
-    document.getElementById("connectionDisplay");
+const connectionText =
+    document.getElementById("connectionText");
 
 
 /* =====================================================
-   NAME
-===================================================== */
+   USER NAME
+   ===================================================== */
 
-nameInput.value =
-    userName;
-
-identityDisplay.textContent =
-    userName.toUpperCase();
+let userName =
+    localStorage.getItem("jarvisUserName") || "";
 
 
-saveNameButton.addEventListener(
-    "click",
-    saveName
-);
+if (userName) {
 
+    nameInput.value =
+        userName;
 
-nameInput.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (event.key === "Enter") {
-            saveName();
-        }
-
-    }
-);
-
-
-function saveName() {
-
-    const value =
-        nameInput.value.trim();
-
-    if (!value) {
-        return;
-    }
-
-    userName =
-        value;
-
-    localStorage.setItem(
-        "jarvisUserName",
-        userName
-    );
-
-    identityDisplay.textContent =
+    userDisplay.textContent =
         userName.toUpperCase();
-
-    log(
-        "system",
-        "User identity updated to " +
-        userName +
-        "."
-    );
-
-    speak(
-        "Identity updated. Hello, " +
-        userName +
-        "."
-    );
-
 }
 
 
-/* =====================================================
-   LOGGING
-===================================================== */
+nameInput.addEventListener(
+    "input",
+    () => {
 
-function log(
-    type,
-    message
+        userName =
+            nameInput.value.trim();
+
+        localStorage.setItem(
+            "jarvisUserName",
+            userName
+        );
+
+        userDisplay.textContent =
+            userName
+                ? userName.toUpperCase()
+                : "USER";
+    }
+);
+
+
+/* =====================================================
+   RATE / PITCH
+   ===================================================== */
+
+rateControl.addEventListener(
+    "input",
+    () => {
+
+        rateValue.textContent =
+            Number(rateControl.value).toFixed(2);
+    }
+);
+
+
+pitchControl.addEventListener(
+    "input",
+    () => {
+
+        pitchValue.textContent =
+            Number(pitchControl.value).toFixed(2);
+    }
+);
+
+
+/* =====================================================
+   CONSOLE
+   ===================================================== */
+
+function addConsole(
+    text,
+    type = ""
 ) {
 
     const line =
         document.createElement("div");
 
     line.className =
-        "console-line " +
-        type;
-
-    const time =
-        new Date()
-            .toLocaleTimeString();
+        "consoleLine " + type;
 
     line.textContent =
-        "[" +
-        time +
-        "] " +
-        message;
+        text;
 
-    consoleElement.appendChild(
-        line
-    );
+    consoleElement.appendChild(line);
 
     consoleElement.scrollTop =
         consoleElement.scrollHeight;
 
-}
-
-
-/* =====================================================
-   VOICE STATE
-===================================================== */
-
-function setVoiceState(
-    state
-) {
-
-    voiceState.innerHTML =
-        '<span class="listening-dot"></span>' +
-        state;
-
-}
-
-
-/* =====================================================
-   SPEECH SYNTHESIS
-===================================================== */
-
-function loadVoices() {
-
-    voices =
-        speechSynthesis.getVoices();
-
-    voiceSelect.innerHTML = "";
-
-
-    if (!voices.length) {
-
-        const option =
-            document.createElement("option");
-
-        option.textContent =
-            "Default browser voice";
-
-        voiceSelect.appendChild(
-            option
-        );
-
-        return;
-
-    }
-
-
-    voices.forEach(
-        (voice, index) => {
-
-            const option =
-                document.createElement("option");
-
-            option.value =
-                index;
-
-            option.textContent =
-                voice.name +
-                " — " +
-                voice.lang;
-
-            voiceSelect.appendChild(
-                option
-            );
-
-        }
-    );
-
-
     /*
-     * Try to automatically choose a natural
-     * sounding English voice.
+     * Keep console from growing forever.
      */
 
-    const preferred =
-        voices.findIndex(
-            voice =>
-                voice.lang.startsWith("en") &&
-                (
-                    voice.name.toLowerCase().includes("natural") ||
-                    voice.name.toLowerCase().includes("enhanced") ||
-                    voice.name.toLowerCase().includes("premium") ||
-                    voice.name.toLowerCase().includes("google")
-                )
+    while (
+        consoleElement.children.length > 40
+    ) {
+
+        consoleElement.removeChild(
+            consoleElement.firstChild
         );
-
-
-    const selected =
-        preferred >= 0
-            ? preferred
-            : voices.findIndex(
-                voice =>
-                    voice.lang.startsWith("en")
-            );
-
-
-    if (selected >= 0) {
-
-        voiceSelect.value =
-            selected;
-
-        selectedVoice =
-            voices[selected];
-
     }
-
 }
 
 
-speechSynthesis.onvoiceschanged =
-    loadVoices;
+/* =====================================================
+   BROWSER VOICES
+   ===================================================== */
 
-loadVoices();
+function loadBrowserVoices() {
 
-
-voiceSelect.addEventListener(
-    "change",
-    function() {
-
-        const index =
-            Number(
-                voiceSelect.value
-            );
-
-        selectedVoice =
-            voices[index] ||
-            null;
-
+    if (
+        !("speechSynthesis" in window)
+    ) {
+        return;
     }
-);
+
+    browserVoices =
+        speechSynthesis.getVoices();
+}
+
+
+if (
+    "speechSynthesis" in window
+) {
+
+    loadBrowserVoices();
+
+    speechSynthesis.onvoiceschanged =
+        loadBrowserVoices;
+}
 
 
 /* =====================================================
-   SPEAK
-===================================================== */
+   BROWSER SPEECH FALLBACK
+   ===================================================== */
 
-function speak(
+function browserSpeak(text) {
+
+    return new Promise(
+        resolve => {
+
+            if (
+                !("speechSynthesis" in window)
+            ) {
+
+                resolve();
+
+                return;
+            }
+
+
+            try {
+
+                speechSynthesis.cancel();
+
+
+                const utterance =
+                    new SpeechSynthesisUtterance(
+                        text
+                    );
+
+
+                /*
+                 * Try to choose an English voice.
+                 */
+
+                const preferred =
+                    browserVoices.find(
+                        voice =>
+                            voice.lang &&
+                            voice.lang
+                                .toLowerCase()
+                                .startsWith("en")
+                    );
+
+
+                if (preferred) {
+                    utterance.voice =
+                        preferred;
+                }
+
+
+                utterance.rate =
+                    Number(rateControl.value);
+
+                utterance.pitch =
+                    Number(pitchControl.value);
+
+
+                utterance.onstart =
+                    () => {
+
+                        speaking = true;
+
+                        document.body.classList
+                            .add("speaking");
+                    };
+
+
+                utterance.onend =
+                    () => {
+
+                        speaking = false;
+
+                        document.body.classList
+                            .remove("speaking");
+
+                        resolve();
+                    };
+
+
+                utterance.onerror =
+                    () => {
+
+                        speaking = false;
+
+                        document.body.classList
+                            .remove("speaking");
+
+                        resolve();
+                    };
+
+
+                speechSynthesis.speak(
+                    utterance
+                );
+
+
+            } catch (error) {
+
+                speaking = false;
+
+                document.body.classList
+                    .remove("speaking");
+
+                resolve();
+            }
+        }
+    );
+}
+
+
+/* =====================================================
+   BASE64 → AUDIO BLOB
+   ===================================================== */
+
+function base64ToBlob(
+    base64,
+    mimeType
+) {
+
+    const byteCharacters =
+        atob(base64);
+
+    const byteNumbers =
+        new Array(
+            byteCharacters.length
+        );
+
+
+    for (
+        let i = 0;
+        i < byteCharacters.length;
+        i++
+    ) {
+
+        byteNumbers[i] =
+            byteCharacters.charCodeAt(i);
+    }
+
+
+    const byteArray =
+        new Uint8Array(
+            byteNumbers
+        );
+
+
+    return new Blob(
+        [byteArray],
+        {
+            type:
+                mimeType || "audio/mpeg"
+        }
+    );
+}
+
+
+/* =====================================================
+   OPENROUTER VOICE
+   ===================================================== */
+
+function speakWithOpenRouter(
     text
 ) {
 
-    if (!text) {
-        return;
-    }
-
-
-    speaking = true;
-
-    setVoiceState(
-        "SPEAKING"
-    );
-
-    headerStatus.textContent =
-        "JARVIS SPEAKING";
-
-
-    /*
-     * Cancel anything waiting in the
-     * browser's speech queue.
-     */
-
-    speechSynthesis.cancel();
-
-
-    const utterance =
-        new SpeechSynthesisUtterance(
-            text
-        );
-
-
-    if (selectedVoice) {
-
-        utterance.voice =
-            selectedVoice;
-
-    }
-
-
-    utterance.rate =
-        Number(
-            document.getElementById(
-                "rateControl"
-            ).value
-        );
-
-
-    utterance.pitch =
-        Number(
-            document.getElementById(
-                "pitchControl"
-            ).value
-        );
-
-
-    utterance.volume =
-        1;
-
-
-    utterance.onend =
-        function() {
-
-            speaking = false;
-
-            if (!aiThinking) {
-
-                setVoiceState(
-                    "LISTENING"
-                );
-
-                headerStatus.textContent =
-                    "JARVIS ONLINE";
-
-            }
-
-        };
-
-
-    utterance.onerror =
-        function() {
-
-            speaking = false;
-
-            setVoiceState(
-                "LISTENING"
-            );
-
-            headerStatus.textContent =
-                "JARVIS ONLINE";
-
-        };
-
-
-    speechSynthesis.speak(
-        utterance
-    );
-
-}
-
-
-/* =====================================================
-   OPENROUTER / APPS SCRIPT AI
-===================================================== */
-
-function askJarvisAI(
-    message
-) {
-
     return new Promise(
-        function(resolve, reject) {
+        (resolve, reject) => {
 
             const callbackName =
-                "__jarvisAI_" +
+                "jarvisTTS_" +
                 Date.now() +
                 "_" +
-                Math.floor(
-                    Math.random() * 100000
-                );
+                (++requestCounter);
+
+
+            const voice =
+                voiceSelect.value || "eve";
+
+
+            const speed =
+                Number(rateControl.value) || 1;
 
 
             const script =
-                document.createElement(
-                    "script"
-                );
+                document.createElement("script");
 
 
-            let finished =
-                false;
+            let finished = false;
 
 
-            const timeout =
-                setTimeout(
-                    function() {
+            const cleanup =
+                () => {
 
-                        if (finished) {
-                            return;
-                        }
+                    if (script.parentNode) {
 
-                        finished = true;
+                        script.parentNode
+                            .removeChild(script);
+                    }
 
-                        cleanup();
+                    try {
 
-                        reject(
-                            new Error(
-                                "JARVIS AI request timed out."
-                            )
-                        );
+                        delete window[
+                            callbackName
+                        ];
 
-                    },
-                    20000
-                );
+                    } catch (e) {}
 
-
-            function cleanup() {
-
-                clearTimeout(
-                    timeout
-                );
+                    if (timeout) {
+                        clearTimeout(timeout);
+                    }
+                };
 
 
-                if (
-                    script.parentNode
-                ) {
-
-                    script.parentNode
-                        .removeChild(
-                            script
-                        );
-
-                }
-
-
-                try {
-
-                    delete window[
-                        callbackName
-                    ];
-
-                }
-
-                catch (error) {
-
-                    window[
-                        callbackName
-                    ] = undefined;
-
-                }
-
-            }
-
-
-            window[
-                callbackName
-            ] =
-                function(data) {
+            const finish =
+                (success, value) => {
 
                     if (finished) {
                         return;
@@ -1426,38 +1432,441 @@ function askJarvisAI(
 
                     cleanup();
 
+                    if (success) {
+                        resolve(value);
+                    } else {
+                        reject(value);
+                    }
+                };
 
-                    if (!data) {
 
-                        reject(
+            window[callbackName] =
+                async function(data) {
+
+                    if (
+                        !data ||
+                        !data.success ||
+                        !data.audio
+                    ) {
+
+                        finish(
+                            false,
                             new Error(
-                                "No response from JARVIS."
+                                data &&
+                                data.error
+                                    ? data.error
+                                    : "TTS request failed."
                             )
                         );
 
                         return;
-
                     }
 
 
-                    if (!data.success) {
+                    try {
 
-                        reject(
-                            new Error(
-                                data.error ||
-                                "OpenRouter returned an error."
-                            )
+                        const blob =
+                            base64ToBlob(
+                                data.audio,
+                                data.mimeType ||
+                                "audio/mpeg"
+                            );
+
+
+                        if (currentAudio) {
+
+                            try {
+                                currentAudio.pause();
+                            } catch (e) {}
+
+                            currentAudio = null;
+                        }
+
+
+                        if (currentAudioURL) {
+
+                            URL.revokeObjectURL(
+                                currentAudioURL
+                            );
+
+                            currentAudioURL =
+                                null;
+                        }
+
+
+                        currentAudioURL =
+                            URL.createObjectURL(
+                                blob
+                            );
+
+
+                        const audio =
+                            new Audio(
+                                currentAudioURL
+                            );
+
+
+                        currentAudio =
+                            audio;
+
+
+                        audio.preload =
+                            "auto";
+
+
+                        audio.onplay =
+                            () => {
+
+                                speaking = true;
+
+                                document.body
+                                    .classList
+                                    .add("speaking");
+                            };
+
+
+                        audio.onended =
+                            () => {
+
+                                speaking = false;
+
+                                document.body
+                                    .classList
+                                    .remove("speaking");
+
+
+                                if (
+                                    currentAudioURL
+                                ) {
+
+                                    URL.revokeObjectURL(
+                                        currentAudioURL
+                                    );
+
+                                    currentAudioURL =
+                                        null;
+                                }
+
+
+                                currentAudio =
+                                    null;
+                            };
+
+
+                        audio.onerror =
+                            () => {
+
+                                speaking = false;
+
+                                document.body
+                                    .classList
+                                    .remove("speaking");
+
+                                currentAudio =
+                                    null;
+
+                                finish(
+                                    false,
+                                    new Error(
+                                        "Audio playback failed."
+                                    )
+                                );
+                            };
+
+
+                        try {
+
+                            await audio.play();
+
+                            finish(
+                                true,
+                                true
+                            );
+
+                        } catch (playError) {
+
+                            finish(
+                                false,
+                                playError
+                            );
+                        }
+
+
+                    } catch (error) {
+
+                        finish(
+                            false,
+                            error
                         );
-
-                        return;
-
                     }
+                };
 
 
-                    resolve(
-                        data.response
+            /*
+             * Encode every query parameter.
+             */
+
+            const url =
+                APPS_SCRIPT_URL +
+                "?tts=1" +
+                "&callback=" +
+                encodeURIComponent(
+                    callbackName
+                ) +
+                "&voice=" +
+                encodeURIComponent(
+                    voice
+                ) +
+                "&speed=" +
+                encodeURIComponent(
+                    speed
+                ) +
+                "&text=" +
+                encodeURIComponent(
+                    text.substring(
+                        0,
+                        15000
+                    )
+                ) +
+                "&t=" +
+                Date.now();
+
+
+            script.src =
+                url;
+
+
+            script.async =
+                true;
+
+
+            script.onerror =
+                () => {
+
+                    finish(
+                        false,
+                        new Error(
+                            "Could not connect to the voice server."
+                        )
                     );
+                };
 
+
+            document.body.appendChild(
+                script
+            );
+
+
+            /*
+             * Prevent a request from hanging forever.
+             */
+
+            const timeout =
+                setTimeout(
+                    () => {
+
+                        finish(
+                            false,
+                            new Error(
+                                "Voice request timed out."
+                            )
+                        );
+
+                    },
+                    30000
+                );
+        }
+    );
+}
+
+
+/* =====================================================
+   MAIN SPEAK FUNCTION
+   ===================================================== */
+
+async function speak(text) {
+
+    if (!text) {
+        return;
+    }
+
+
+    text =
+        String(text).trim();
+
+
+    if (!text) {
+        return;
+    }
+
+
+    /*
+     * Stop any previous speech.
+     */
+
+    if (
+        "speechSynthesis" in window
+    ) {
+
+        speechSynthesis.cancel();
+    }
+
+
+    if (currentAudio) {
+
+        try {
+            currentAudio.pause();
+        } catch (e) {}
+
+        currentAudio =
+            null;
+    }
+
+
+    /*
+     * Mark ourselves as speaking immediately.
+     * This prevents the microphone from treating
+     * JARVIS's own voice as a command.
+     */
+
+    speaking = true;
+
+    document.body.classList
+        .add("speaking");
+
+
+    try {
+
+        await speakWithOpenRouter(
+            text
+        );
+
+
+    } catch (error) {
+
+        console.warn(
+            "OpenRouter TTS failed:",
+            error
+        );
+
+
+        /*
+         * If the online voice fails, use the
+         * browser's built-in speech system.
+         */
+
+        await browserSpeak(
+            text
+        );
+    }
+
+
+    speaking = false;
+
+    document.body.classList
+        .remove("speaking");
+}
+
+
+/* =====================================================
+   JSONP AI REQUEST
+   ===================================================== */
+
+function askJarvisAI(
+    message
+) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const callbackName =
+                "jarvisAI_" +
+                Date.now() +
+                "_" +
+                (++requestCounter);
+
+
+            const script =
+                document.createElement("script");
+
+
+            let finished =
+                false;
+
+
+            const cleanup =
+                () => {
+
+                    if (script.parentNode) {
+
+                        script.parentNode
+                            .removeChild(script);
+                    }
+
+
+                    try {
+
+                        delete window[
+                            callbackName
+                        ];
+
+                    } catch (e) {}
+
+
+                    if (timeout) {
+
+                        clearTimeout(
+                            timeout
+                        );
+                    }
+                };
+
+
+            const finish =
+                (success, value) => {
+
+                    if (finished) {
+                        return;
+                    }
+
+                    finished = true;
+
+                    cleanup();
+
+                    if (success) {
+                        resolve(value);
+                    } else {
+                        reject(value);
+                    }
+                };
+
+
+            window[callbackName] =
+                function(data) {
+
+                    if (
+                        data &&
+                        data.success &&
+                        data.response
+                    ) {
+
+                        finish(
+                            true,
+                            data.response
+                        );
+
+                    } else {
+
+                        finish(
+                            false,
+                            new Error(
+                                data &&
+                                data.error
+                                    ? data.error
+                                    : "AI request failed."
+                            )
+                        );
+                    }
                 };
 
 
@@ -1469,11 +1878,14 @@ function askJarvisAI(
                 ) +
                 "&message=" +
                 encodeURIComponent(
-                    message
+                    message.substring(
+                        0,
+                        4000
+                    )
                 ) +
                 "&name=" +
                 encodeURIComponent(
-                    userName
+                    userName || "Sir"
                 ) +
                 "&t=" +
                 Date.now();
@@ -1483,23 +1895,19 @@ function askJarvisAI(
                 url;
 
 
+            script.async =
+                true;
+
+
             script.onerror =
-                function() {
+                () => {
 
-                    if (finished) {
-                        return;
-                    }
-
-                    finished = true;
-
-                    cleanup();
-
-                    reject(
+                    finish(
+                        false,
                         new Error(
-                            "Could not connect to the JARVIS backend."
+                            "Could not connect to JARVIS AI."
                         )
                     );
-
                 };
 
 
@@ -1507,182 +1915,136 @@ function askJarvisAI(
                 script
             );
 
+
+            const timeout =
+                setTimeout(
+                    () => {
+
+                        finish(
+                            false,
+                            new Error(
+                                "AI request timed out."
+                            )
+                        );
+
+                    },
+                    30000
+                );
         }
     );
-
 }
 
 
 /* =====================================================
-   COMMAND PROCESSOR
-===================================================== */
+   LOCAL COMMANDS
+   ===================================================== */
 
-async function processCommand(
-    command
+function localCommand(
+    text
 ) {
 
-    const original =
-        command.trim();
-
-    const text =
-        original.toLowerCase();
+    const lower =
+        text.toLowerCase().trim();
 
 
-    if (!original) {
-        return;
-    }
-
-
-    log(
-        "user",
-        "YOU: " +
-        original
-    );
-
-
-    /*
-     * Local commands first.
-     */
+    /* TIME */
 
     if (
-        text === "hello" ||
-        text === "hi" ||
-        text === "hey"
+        lower === "time" ||
+        lower.includes("what time is it") ||
+        lower.includes("what's the time")
     ) {
 
-        speak(
-            "Good day, " +
-            userName +
-            ". How may I assist you?"
-        );
-
-        return;
-
-    }
-
-
-    if (
-        text.includes("what time is it") ||
-        text === "time"
-    ) {
-
-        const now =
-            new Date();
-
-        const time =
-            now.toLocaleTimeString(
-                [],
-                {
-                    hour: "numeric",
-                    minute: "2-digit"
-                }
-            );
-
-        speak(
+        return (
             "The current time is " +
-            time +
-            "."
+            new Date()
+                .toLocaleTimeString()
         );
-
-        return;
-
     }
 
 
+    /* DATE */
+
     if (
-        text.includes("what is today's date") ||
-        text.includes("what day is it") ||
-        text === "date"
+        lower === "date" ||
+        lower.includes("what is the date") ||
+        lower.includes("what's the date") ||
+        lower.includes("what day is it")
     ) {
 
-        const date =
+        return (
+            "Today is " +
             new Date()
                 .toLocaleDateString(
-                    [],
+                    undefined,
                     {
                         weekday: "long",
+                        year: "numeric",
                         month: "long",
-                        day: "numeric",
-                        year: "numeric"
+                        day: "numeric"
                     }
-                );
-
-        speak(
-            "Today is " +
-            date +
-            "."
+                )
         );
-
-        return;
-
     }
 
 
+    /* GREETINGS */
+
     if (
-        text.includes("status")
+        lower === "hello" ||
+        lower === "hi" ||
+        lower === "hello jarvis" ||
+        lower === "hi jarvis"
     ) {
 
-        speak(
-            "All primary systems are operational. " +
-            "The AI connection is online."
+        return (
+            "Good day. How may I assist you?"
         );
-
-        return;
-
     }
 
 
+    /* WHO ARE YOU */
+
     if (
-        text.includes("who are you") ||
-        text.includes("what are you")
+        lower.includes("who are you") ||
+        lower.includes("what are you")
     ) {
 
-        speak(
-            "I am JARVIS, your personal artificial intelligence assistant."
+        return (
+            "I am JARVIS, your browser-based personal AI assistant."
         );
-
-        return;
-
     }
 
 
+    /* THANKS */
+
     if (
-        text.includes("thank you") ||
-        text === "thanks"
+        lower === "thanks" ||
+        lower === "thank you"
     ) {
 
-        speak(
-            "You're welcome, " +
-            userName +
-            "."
-        );
-
-        return;
-
+        return "You're welcome.";
     }
 
 
+    /* STATUS */
+
     if (
-        text === "help" ||
-        text.includes("what can you do")
+        lower === "status" ||
+        lower.includes("system status")
     ) {
 
-        speak(
-            "I can answer questions, explain information, " +
-            "and assist you through this interface."
+        return (
+            "All primary JARVIS systems are operational."
         );
-
-        return;
-
     }
 
 
-    /*
-     * Website commands.
-     */
+    /* OPEN YOUTUBE */
 
     if (
-        text.includes("open youtube")
+        lower === "open youtube" ||
+        lower.includes("open youtube")
     ) {
 
         window.open(
@@ -1690,17 +2052,15 @@ async function processCommand(
             "_blank"
         );
 
-        speak(
-            "Opening YouTube."
-        );
-
-        return;
-
+        return "Opening YouTube.";
     }
 
 
+    /* OPEN GOOGLE */
+
     if (
-        text.includes("open google")
+        lower === "open google" ||
+        lower.includes("open google")
     ) {
 
         window.open(
@@ -1708,17 +2068,15 @@ async function processCommand(
             "_blank"
         );
 
-        speak(
-            "Opening Google."
-        );
-
-        return;
-
+        return "Opening Google.";
     }
 
 
+    /* OPEN GMAIL */
+
     if (
-        text.includes("open gmail")
+        lower === "open gmail" ||
+        lower.includes("open gmail")
     ) {
 
         window.open(
@@ -1726,25 +2084,64 @@ async function processCommand(
             "_blank"
         );
 
-        speak(
-            "Opening Gmail."
-        );
-
-        return;
-
+        return "Opening Gmail.";
     }
 
 
-    /*
-     * Search command.
-     */
+    /* OPEN DRIVE */
 
     if (
-        text.startsWith("search ")
+        lower === "open drive" ||
+        lower.includes("open google drive")
+    ) {
+
+        window.open(
+            "https://drive.google.com",
+            "_blank"
+        );
+
+        return "Opening Google Drive.";
+    }
+
+
+    /* GOOGLE SEARCH */
+
+    if (
+        lower.startsWith("search for ")
     ) {
 
         const query =
-            original.substring(
+            text.substring(
+                11
+            ).trim();
+
+
+        if (query) {
+
+            window.open(
+                "https://www.google.com/search?q=" +
+                encodeURIComponent(
+                    query
+                ),
+                "_blank"
+            );
+
+
+            return (
+                "Searching Google for " +
+                query +
+                "."
+            );
+        }
+    }
+
+
+    if (
+        lower.startsWith("google ")
+    ) {
+
+        const query =
+            text.substring(
                 7
             ).trim();
 
@@ -1760,142 +2157,179 @@ async function processCommand(
             );
 
 
-            speak(
-                "Searching for " +
+            return (
+                "Searching Google for " +
                 query +
                 "."
             );
-
         }
-
-        return;
-
     }
 
 
-    /*
-     * Everything else goes to AI.
-     */
+    /* HELP */
 
-    await askAI(
-        original
-    );
+    if (
+        lower === "help" ||
+        lower.includes("what can you do")
+    ) {
 
+        return (
+            "I can answer questions, search the web through supported commands, open websites, tell you the time and date, and operate the JARVIS interface."
+        );
+    }
+
+
+    return null;
 }
 
 
 /* =====================================================
-   AI REQUEST
-===================================================== */
+   PROCESS USER COMMAND
+   ===================================================== */
 
-async function askAI(
-    message
+async function processUserCommand(
+    text
 ) {
 
-    aiThinking = true;
+    if (!text) {
+        return;
+    }
 
-    setVoiceState(
-        "THINKING"
+
+    text =
+        text.trim();
+
+
+    if (!text) {
+        return;
+    }
+
+
+    addConsole(
+        "USER: " + text,
+        "user"
     );
 
-    headerStatus.textContent =
+
+    /*
+     * Check local commands first.
+     */
+
+    const localResponse =
+        localCommand(text);
+
+
+    if (localResponse) {
+
+        addConsole(
+            "JARVIS: " +
+            localResponse,
+            "jarvis"
+        );
+
+
+        await speak(
+            localResponse
+        );
+
+
+        return;
+    }
+
+
+    /*
+     * Otherwise send it to OpenRouter.
+     */
+
+    connectionText.textContent =
         "AI PROCESSING";
-
-    connectionDisplay.textContent =
-        "PROCESSING";
-
-    aiStatus.textContent =
-        "THINKING";
 
 
     try {
 
         const response =
             await askJarvisAI(
-                message
+                text
             );
 
 
-        aiThinking = false;
-
-        connectionDisplay.textContent =
-            "READY";
-
-        aiStatus.textContent =
-            "ONLINE";
-
-        headerStatus.textContent =
-            "JARVIS ONLINE";
-
-
-        log(
-            "jarvis",
+        addConsole(
             "JARVIS: " +
+            response,
+            "jarvis"
+        );
+
+
+        connectionText.textContent =
+            "SYSTEM ONLINE";
+
+
+        await speak(
             response
         );
 
 
-        speak(
-            response
-        );
+    } catch (error) {
 
-    }
-
-    catch (error) {
-
-        console.error(
-            error
-        );
+        console.error(error);
 
 
-        aiThinking = false;
-
-        connectionDisplay.textContent =
-            "ERROR";
-
-        aiStatus.textContent =
-            "OFFLINE";
-
-        headerStatus.textContent =
-            "AI ERROR";
+        connectionText.textContent =
+            "CONNECTION ERROR";
 
 
-        const errorMessage =
-            "I am having trouble connecting to my AI system.";
+        const fallback =
+            "I am having trouble reaching my AI core right now.";
 
 
-        log(
-            "jarvis",
+        addConsole(
             "JARVIS: " +
-            errorMessage
+            fallback,
+            "jarvis"
         );
 
 
-        speak(
-            errorMessage
+        await speak(
+            fallback
         );
 
+
+        setTimeout(
+            () => {
+
+                connectionText.textContent =
+                    "SYSTEM ONLINE";
+
+            },
+            3000
+        );
     }
-
 }
 
 
 /* =====================================================
    WAKE WORD
-===================================================== */
+   ===================================================== */
 
 function handleSpeech(
     transcript
 ) {
 
+    if (!transcript) {
+        return;
+    }
+
+
     const text =
-        transcript
-            .toLowerCase()
-            .trim();
+        transcript.trim();
+
+
+    const lower =
+        text.toLowerCase();
 
 
     /*
-     * Ignore anything JARVIS itself is saying.
+     * Ignore our own voice.
      */
 
     if (speaking) {
@@ -1904,122 +2338,122 @@ function handleSpeech(
 
 
     /*
-     * Wake word.
+     * Look for:
+     *
+     * "hey jarvis"
+     * "hey jarvis what's the weather"
+     * "jarvis ..."
      */
 
-    const wakeWords = [
-        "hey jarvis",
-        "jarvis"
-    ];
-
-
-    let wakeDetected =
-        false;
-
-
-    for (
-        const wake of wakeWords
-    ) {
-
-        if (
-            text.includes(wake)
-        ) {
-
-            wakeDetected =
-                true;
-
-            break;
-
-        }
-
-    }
-
-
-    if (wakeDetected) {
-
-        /*
-         * Remove wake phrase.
-         */
-
-        let command =
-            text
-                .replace(
-                    "hey jarvis",
-                    ""
-                )
-                .replace(
-                    "jarvis",
-                    ""
-                )
-                .trim();
-
-
-        /*
-         * If the user only said:
-         *
-         * "Hey JARVIS"
-         *
-         * respond immediately.
-         */
-
-        if (!command) {
-
-            log(
-                "user",
-                "YOU: Hey JARVIS"
-            );
-
-
-            log(
-                "jarvis",
-                "JARVIS: Yes, " +
-                userName +
-                "?"
-            );
-
-
-            speak(
-                "Yes, " +
-                userName +
-                "?"
-            );
-
-
-            return;
-
-        }
-
-
-        /*
-         * If they said:
-         *
-         * "Hey JARVIS what's the weather?"
-         *
-         * send the actual command.
-         */
-
-        processCommand(
-            command
+    let wakeIndex =
+        lower.indexOf(
+            "hey jarvis"
         );
 
+
+    let wakeLength =
+        "hey jarvis".length;
+
+
+    if (wakeIndex === -1) {
+
+        wakeIndex =
+            lower.indexOf(
+                "jarvis"
+            );
+
+        wakeLength =
+            "jarvis".length;
     }
 
+
+    /*
+     * No wake word.
+     */
+
+    if (wakeIndex === -1) {
+        return;
+    }
+
+
+    const afterWake =
+        text
+            .substring(
+                wakeIndex + wakeLength
+            )
+            .trim();
+
+
+    /*
+     * Wake word only:
+     *
+     * Hey JARVIS
+     *
+     * → Yes, Kendrick?
+     */
+
+    if (!afterWake) {
+
+        const name =
+            userName || "Sir";
+
+
+        addConsole(
+            "WAKE WORD DETECTED",
+            "user"
+        );
+
+
+        speak(
+            "Yes, " +
+            name +
+            "?"
+        );
+
+
+        return;
+    }
+
+
+    /*
+     * Wake word + command.
+     */
+
+    wakeWordDetected =
+        true;
+
+
+    processUserCommand(
+        afterWake
+    );
 }
 
 
 /* =====================================================
    SPEECH RECOGNITION
-===================================================== */
+   ===================================================== */
 
-const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
+function setupRecognition() {
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
 
 
-if (SpeechRecognition) {
+    if (!SpeechRecognition) {
 
-    recognitionAvailable =
-        true;
+        micStatus.textContent =
+            "UNSUPPORTED";
+
+        listenStatus.textContent =
+            "TYPE MODE";
+
+        addConsole(
+            "Speech recognition is not supported by this browser."
+        );
+
+        return;
+    }
 
 
     recognition =
@@ -2031,7 +2465,7 @@ if (SpeechRecognition) {
 
 
     recognition.interimResults =
-        true;
+        false;
 
 
     recognition.lang =
@@ -2043,177 +2477,144 @@ if (SpeechRecognition) {
 
 
     recognition.onstart =
-        function() {
+        () => {
 
-            listening =
-                true;
+            listening = true;
 
             micStatus.textContent =
                 "ACTIVE";
 
-            setVoiceState(
-                aiThinking
-                    ? "THINKING"
-                    : "LISTENING"
-            );
+            listenStatus.textContent =
+                "LISTENING";
 
+            micButton.classList
+                .add("active");
+
+            document.body.classList
+                .add("listening");
         };
 
 
     recognition.onresult =
-        function(event) {
-
-            let finalText =
-                "";
-
+        event => {
 
             for (
                 let i =
                     event.resultIndex;
 
                 i <
-                event.results.length;
+                    event.results.length;
 
                 i++
             ) {
 
                 if (
-                    event.results[i].isFinal
+                    event.results[i]
+                        .isFinal
                 ) {
 
-                    finalText +=
+                    const transcript =
                         event.results[i][0]
                             .transcript;
 
+
+                    if (
+                        transcript &&
+                        transcript.trim()
+                    ) {
+
+                        handleSpeech(
+                            transcript
+                        );
+                    }
                 }
-
             }
-
-
-            finalText =
-                finalText.trim();
-
-
-            if (!finalText) {
-                return;
-            }
-
-
-            /*
-             * Don't allow JARVIS's own voice
-             * to activate commands.
-             */
-
-            if (speaking) {
-                return;
-            }
-
-
-            handleSpeech(
-                finalText
-            );
-
         };
 
 
     recognition.onerror =
-        function(event) {
+        event => {
 
-            console.log(
+            console.warn(
                 "Speech recognition:",
                 event.error
             );
 
 
-            micStatus.textContent =
-                "RETRYING";
-
-
-            /*
-             * Permission errors cannot be
-             * fixed automatically.
-             */
-
             if (
                 event.error ===
-                "not-allowed" ||
+                    "not-allowed" ||
                 event.error ===
-                "service-not-allowed"
+                    "service-not-allowed"
             ) {
 
                 micStatus.textContent =
                     "BLOCKED";
 
-                log(
-                    "system",
-                    "Microphone permission is blocked."
-                );
+                listenStatus.textContent =
+                    "MIC BLOCKED";
 
+                return;
             }
-
         };
 
 
     recognition.onend =
-        function() {
+        () => {
 
-            listening =
-                false;
+            listening = false;
+
+
+            micButton.classList
+                .remove("active");
+
+
+            document.body.classList
+                .remove("listening");
 
 
             /*
-             * Keep listening.
+             * Automatically restart.
+             *
+             * This gives JARVIS its
+             * continuous-listening behavior.
              */
 
             if (
-                recognitionAvailable
+                !speaking &&
+                !recognitionRestartTimer
             ) {
 
-                setTimeout(
-                    function() {
+                recognitionRestartTimer =
+                    setTimeout(
+                        () => {
 
-                        try {
+                            recognitionRestartTimer =
+                                null;
 
-                            recognition.start();
+                            startListening();
 
-                        }
-
-                        catch (error) {
-
-                            /*
-                             * Browser may say that
-                             * recognition is already
-                             * running. That's okay.
-                             */
-
-                        }
-
-                    },
-                    250
-                );
-
+                        },
+                        500
+                    );
             }
-
         };
-
-
 }
 
 
 /* =====================================================
-   START MICROPHONE
-===================================================== */
+   START LISTENING
+   ===================================================== */
 
-function startMicrophone() {
+function startListening() {
 
-    if (!recognitionAvailable) {
-
-        speak(
-            "Speech recognition is not supported by this browser."
-        );
-
+    if (!recognition) {
         return;
+    }
 
+
+    if (listening) {
+        return;
     }
 
 
@@ -2221,54 +2622,86 @@ function startMicrophone() {
 
         recognition.start();
 
-        micButton.textContent =
-            "MIC ON";
+    } catch (error) {
 
-        log(
-            "system",
-            "Continuous microphone activated."
-        );
+        /*
+         * Chrome can throw if start()
+         * happens while it is already
+         * starting.
+         */
 
-    }
-
-    catch (error) {
-
-        console.log(
+        console.warn(
+            "Recognition start:",
             error
         );
-
     }
-
 }
 
 
 /* =====================================================
-   MICROPHONE BUTTON
-===================================================== */
+   STOP LISTENING
+   ===================================================== */
+
+function stopListening() {
+
+    if (!recognition) {
+        return;
+    }
+
+
+    try {
+
+        recognition.stop();
+
+    } catch (error) {}
+}
+
+
+/* =====================================================
+   MIC BUTTON
+   ===================================================== */
 
 micButton.addEventListener(
     "click",
-    function() {
+    () => {
 
-        startMicrophone();
+        if (!recognition) {
 
+            setupRecognition();
+        }
+
+
+        if (listening) {
+
+            stopListening();
+
+            micStatus.textContent =
+                "STANDBY";
+
+            listenStatus.textContent =
+                "PAUSED";
+
+        } else {
+
+            startListening();
+        }
     }
 );
 
 
 /* =====================================================
-   TEXT COMMAND
-===================================================== */
+   SEND BUTTON
+   ===================================================== */
 
 sendButton.addEventListener(
     "click",
-    function() {
+    () => {
 
-        const command =
+        const text =
             commandInput.value.trim();
 
 
-        if (!command) {
+        if (!text) {
             return;
         }
 
@@ -2277,168 +2710,198 @@ sendButton.addEventListener(
             "";
 
 
-        /*
-         * Text input doesn't require
-         * the wake word.
-         */
-
-        processCommand(
-            command
+        processUserCommand(
+            text
         );
-
     }
 );
 
 
+/* =====================================================
+   ENTER KEY
+   ===================================================== */
+
 commandInput.addEventListener(
     "keydown",
-    function(event) {
+    event => {
 
         if (
-            event.key === "Enter"
+            event.key ===
+            "Enter"
         ) {
 
+            event.preventDefault();
+
             sendButton.click();
-
         }
-
     }
 );
 
 
 /* =====================================================
    BOOT SEQUENCE
-===================================================== */
+   ===================================================== */
 
-async function bootSequence() {
+const bootLines = [
 
-    const boot =
-        document.getElementById(
-            "boot"
+    "JARVIS CORE INITIALIZING...",
+    "LOADING NEURAL INTERFACE...",
+    "CONNECTING TO OPENROUTER...",
+    "LOADING VOICE SYSTEM...",
+    "INITIALIZING SPEECH RECOGNITION...",
+    "CALIBRATING REACTOR CORE...",
+    "VOICE SYNTHESIS READY.",
+    "AI CORE READY.",
+    "ALL PRIMARY SYSTEMS ONLINE."
+];
+
+
+let bootIndex =
+    0;
+
+
+function runBoot() {
+
+    bootText.innerHTML =
+        "";
+
+
+    function nextLine() {
+
+        if (
+            bootIndex >=
+            bootLines.length
+        ) {
+
+            bootButton.style.display =
+                "block";
+
+            return;
+        }
+
+
+        const line =
+            document.createElement(
+                "div"
+            );
+
+
+        line.textContent =
+            "> " +
+            bootLines[
+                bootIndex
+            ];
+
+
+        bootText.appendChild(
+            line
         );
 
-    const bootText =
-        document.getElementById(
-            "bootText"
+
+        bootIndex++;
+
+
+        setTimeout(
+            nextLine,
+            300
         );
-
-    const progress =
-        document.getElementById(
-            "bootProgress"
-        );
-
-
-    const messages = [
-
-        "INITIALIZING CORE SYSTEMS...",
-        "LOADING NEURAL INTERFACE...",
-        "CONNECTING VOICE SYSTEM...",
-        "INITIALIZING MICROPHONE...",
-        "CONNECTING AI ROUTER...",
-        "CHECKING OPENROUTER CONNECTION...",
-        "LOADING JARVIS PERSONALITY...",
-        "SYSTEMS ONLINE."
-
-    ];
-
-
-    for (
-        let i = 0;
-
-        i < messages.length;
-
-        i++
-    ) {
-
-        bootText.textContent =
-            messages[i];
-
-
-        progress.style.width =
-            (
-                ((i + 1) /
-                messages.length) *
-                100
-            ) +
-            "%";
-
-
-        await new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    280
-                )
-        );
-
     }
 
 
-    await new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                500
-            )
-    );
-
-
-    boot.style.display =
-        "none";
-
-
-    headerStatus.textContent =
-        "JARVIS ONLINE";
-
-
-    log(
-        "system",
-        "JARVIS initialization complete."
-    );
-
-
-    log(
-        "system",
-        "AI connection ready."
-    );
-
-
-    log(
-        "system",
-        "Wake word: HEY JARVIS."
-    );
-
-
-    /*
-     * Start microphone automatically.
-     */
-
-    startMicrophone();
-
+    nextLine();
 }
 
 
-/* =====================================================
-   START
-===================================================== */
+bootButton.addEventListener(
+    "click",
+    async () => {
 
-window.addEventListener(
-    "load",
-    function() {
-
-        identityDisplay.textContent =
-            userName.toUpperCase();
-
-        nameInput.value =
-            userName;
+        bootScreen.classList
+            .add("hidden");
 
 
-        loadVoices();
+        addConsole(
+            "JARVIS INITIALIZED."
+        );
 
 
-        bootSequence();
+        addConsole(
+            "VOICE ENGINE: OPENROUTER TTS"
+        );
 
+
+        addConsole(
+            "WAKE WORD: HEY JARVIS"
+        );
+
+
+        /*
+         * Request microphone permission by
+         * starting recognition after the
+         * user explicitly pressed INITIALIZE.
+         */
+
+        if (!recognition) {
+
+            setupRecognition();
+        }
+
+
+        startListening();
+
+
+        /*
+         * Small startup greeting.
+         */
+
+        const name =
+            userName || "Sir";
+
+
+        await speak(
+            "JARVIS systems online. Yes, " +
+            name +
+            "."
+        );
     }
+);
+
+
+/* =====================================================
+   INITIALIZATION
+   ===================================================== */
+
+bootButton.style.display =
+    "none";
+
+
+runBoot();
+
+
+/*
+ * Initialize browser speech voices.
+ */
+
+loadBrowserVoices();
+
+
+/*
+ * Prepare recognition.
+ */
+
+setupRecognition();
+
+
+/*
+ * Initial console messages.
+ */
+
+addConsole(
+    "BOOT SEQUENCE READY."
+);
+
+addConsole(
+    "AWAITING INITIALIZATION."
 );
 
 </script>
